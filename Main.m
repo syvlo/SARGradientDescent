@@ -23,12 +23,12 @@ function [ U, Energy, NormGrad, Steps ] = Main( Input, Beta, Thresh, StopCriteri
     U = Input;
 
     for i=1:nbIterMax
-        Grad = ComputeGrad(Original, U, MaskI, MaskJ, Beta, Epsilon);
+        Grad = ComputeGrad(V, U, MaskI, MaskJ, Beta, Epsilon);
         NormGrad(i) = norm(Grad);
         if NormGrad(i) < StopCriterion
             break;
         end
-        Energy(i) = ComputeEnergy(U, Original, Beta);
+        Energy(i) = ComputeEnergy(U, V, Beta);
 
         %D'après: http://www.iro.umontreal.ca/~bengioy/ift6266/H12/html/gradient_fr.html
         Steps(i) = (Tau * stepInit) / (Tau + i);%findOptimalStep(stepInit, U, Grad, V, Beta);%

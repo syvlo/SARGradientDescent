@@ -2,6 +2,9 @@ function [ G ] = ComputeGrad( V, U, MaskI, MaskJ, Beta, Epsilon )
 %COMPUTEENERGY Summary of this function goes here
 %   Detailed explanation goes here
 
+    U = U.^2;
+    V = V.^2;
+    
     GV = gradient(V);
 
     Ui = abs(cat(1, U, U(size(U, 1), :)) - cat(1, U(1, :), U));%Compute gradient on rows
@@ -16,10 +19,10 @@ function [ G ] = ComputeGrad( V, U, MaskI, MaskJ, Beta, Epsilon )
     Vj = Vj(:, 1:size(V, 2));
     GV = Vi + Vj;
 
-    G = 2*V ./ U .^ 3 .* (U .* GV - V .* GU) + 2*GU ./ U;
+    G = (U - V) ./ U.^2;% 2*V ./ U .^ 3 .* (U .* GV - V .* GU) + 2*GU ./ U;
 
 %	G = (2*(U .^ 2 - V .^ 2) .* Ui + U .* V .* Vi + 2 * (U .^2 - V .^ 2) .* Uj + U .* V .* Vj) ./ U .^ 3;
-    GTV = (Ui + Uj) ./ sqrt(Ui .^ 2 + Uj .^ 2 + Epsilon);
+    GTV = Ui ./ sqrt(Ui .^ 2 + Epsilon) + Uj ./ sqrt(Uj .^ 2 + Epsilon);%(Ui + Uj) ./ sqrt(Ui .^ 2 + Uj .^ 2 + Epsilon);
     G = G + Beta * GTV;
 
 end
