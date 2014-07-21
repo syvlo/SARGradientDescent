@@ -7,7 +7,7 @@ function [ U, Energy, NormGrad, Steps ] = Main( Input, Beta, Thresh, StopCriteri
     if nargin < 7
         nbIterMax = 5000;
         if nargin < 6
-            stepInit = 0.01;
+            stepInit = 0.0001;
             if nargin < 5
                 Epsilon = 1E-15;
                 if nargin < 4
@@ -32,7 +32,10 @@ function [ U, Energy, NormGrad, Steps ] = Main( Input, Beta, Thresh, StopCriteri
 
         %D'après: http://www.iro.umontreal.ca/~bengioy/ift6266/H12/html/gradient_fr.html
         Steps(i) = (Tau * stepInit) / (Tau + i);%findOptimalStep(stepInit, U, Grad, V, Beta);%
-        U = U - Grad * stepInit;
+%         for k=-100:100
+%             Paysage(k + 101) = ComputeEnergy(U - Grad * k * stepInit, V, Beta);
+%         end
+        U = U + Grad * stepInit;
 
         U(U < 1) = 1;
     end
