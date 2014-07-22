@@ -23,6 +23,8 @@ function [ U, Energy, NormGrad, Steps ] = Main( Input, Beta, Thresh, StopCriteri
     U = Input;
 
     for i=1:nbIterMax
+        U(U < 1) = 1;
+        
         Grad = ComputeGrad(V, U, MaskI, MaskJ, Beta, Epsilon);
         NormGrad(i) = norm(Grad);
         if NormGrad(i) < StopCriterion
@@ -36,8 +38,6 @@ function [ U, Energy, NormGrad, Steps ] = Main( Input, Beta, Thresh, StopCriteri
 %             Paysage(k + 101) = ComputeEnergy(U - Grad * k * stepInit, V, Beta);
 %         end
         U = U + Grad * stepInit;
-
-        U(U < 1) = 1;
     end
 end
 
