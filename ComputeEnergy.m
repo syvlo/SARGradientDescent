@@ -1,7 +1,8 @@
-function [ E ] = ComputeEnergy( U, V, Beta )
+function [ E ] = ComputeEnergy( U, V, Scatterers, Beta )
 %Compute the energy (debugging purposes).
 
     E = V.^2 ./ U.^2 + 2 * log(U);
+    E(Scatterers > 0) = 0;
 
     Ui = abs(cat(1, U, U(size(U, 1), :)) - cat(1, U(1, :), U));%Compute gradient on rows
     Ui = Ui(1:size(U, 1), :);

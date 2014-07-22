@@ -1,4 +1,4 @@
-function [ U, Energy, NormGrad, Steps ] = Main( Input, Beta, Thresh, StopCriterion, Epsilon, stepInit, nbIterMax, Original )
+function [ U, Energy, NormGrad, Steps ] = Main( Input, Scatterers, Beta, Thresh, StopCriterion, Epsilon, stepInit, nbIterMax, Original )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -16,21 +16,31 @@ function [ U, Energy, NormGrad, Steps ] = Main( Input, Beta, Thresh, StopCriteri
             end
         end
     end
+    
+    MessagePeriod = nbIterMax / 1000;
 
     [MaskI, MaskJ] = ComputeMask(Input, Thresh);
 
     V = Original;
     U = Input;
 
+    nbCharToDelete = 0;
     for i=1:nbIterMax
         U(U < 1) = 1;
         
-        Grad = ComputeGrad(V, U, MaskI, MaskJ, Beta, Epsilon);
+        Grad = ComputeGrad(V, U, Scatterers, MaskI, MaskJ, Beta, Epsilon);
         NormGrad(i) = norm(Grad);
         if NormGrad(i) < StopCriterion
             break;
         end
-        Energy(i) = ComputeEnergy(U, V, Beta);
+        Energy(i) = ComputeEnergy(U, V, Scatterers, Beta);
+        
+        if mod(i, MessagePeriod) == 0
+            msg = ['Processed ', num2str(i / nbIterMax * 100), '%%'];
+            fprintf(repmat('\b',1,nbCharToDelete));
+            fprintf(msg);
+            nbCharToDelete=numel(msg) - 1;
+        end
 
         %D'après: http://www.iro.umontreal.ca/~bengioy/ift6266/H12/html/gradient_fr.html
         Steps(i) = (Tau * stepInit) / (Tau + i);%findOptimalStep(stepInit, U, Grad, V, Beta);%
